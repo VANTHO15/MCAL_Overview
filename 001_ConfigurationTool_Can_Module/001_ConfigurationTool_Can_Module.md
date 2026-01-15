@@ -26,17 +26,17 @@ Nội dung của bài viết gồm có những phần sau nhé 📢📢📢:
 + Việc cấu hình các mô-đun MCAL có thể được thực hiện bằng Trình chỉnh sửa cấu hình Elektrobit Tresos.
 + Sau khi quá trình cấu hình hoàn tất, mã có thể được tạo ra cho các biến thể trình điều khiển được hỗ trợ.
 + Một mô-đun điển hình sẽ bao gồm các tệp sau:
-  + 1. Định nghĩa mô-đun
+  + Định nghĩa mô-đun
     - Module.xdm : Mô tả mô-đun có thể được dùng để tạo ra file arxml
     - Module.epd
-  + 2. Code generate
+  + Code generate
     - Module_Cfg.h : Cung cấp mẫu để tạo tệp tiêu đề.
     - Module_Cfg.c : Cung cấp mẫu để tạo cấu hình mô-đun trong quá trình biên dịch.
     - Module_Lcfg.c : Cung cấp mẫu để tạo cấu hình mô-đun Link Time.
     - Module_PBcfg.c : Cung cấp mẫu để tạo cấu hình mô-đun sau khi biên dịch.
-  + 3. Module_Bswmd.arxml: Chi tiết mô-đun như cách sử dụng ngăn xếp, tệp, vùng độc quyền, v.v...
-  + 4. MANIFEST.MF: Thông tin cấp phép của mô-đun (bắt buộc đối với EB)
-  + 5. plugin.xml: Mô tả mô-đun sẽ được sử dụng bởi giao diện người dùng đồ họa (GUI) của EB Tresos Studio.
+  + Module_Bswmd.arxml: Chi tiết mô-đun như cách sử dụng ngăn xếp, tệp, vùng độc quyền, v.v...
+  + MANIFEST.MF: Thông tin cấp phép của mô-đun (bắt buộc đối với EB)
+  + plugin.xml: Mô tả mô-đun sẽ được sử dụng bởi giao diện người dùng đồ họa (GUI) của EB Tresos Studio.
 
 ***Tạo nội dung bằng giao diện dòng lệnh Tresos Studio.***
 + Nội dung config của mô-đun MCAL có thể được tạo bằng lệnh tresos và cấu hình được đề xuất cho một mô-đun nhất định. Các bước sau đây mô tả chi tiết trình tự các thao tác cần thiết. Dựa trên SOC, bạn cần chọn các plugin tương ứng.
