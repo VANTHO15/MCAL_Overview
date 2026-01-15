@@ -9,4 +9,4 @@ This repository is used to show some knowledge about MCAL module and Configurati
 | `002_Eth_Module`                            | [002_Eth_Module](./002_Eth_Module/002_Eth_Module.md)                                                                                                                                                                                                                                                        |
 | `003_Dio_Module`                            | [003_Dio_Module](./003_Dio_Module/003_Dio_Module.md)                                                                                                                                                                                                                                                        |
 
-**Note**: Board is used for this project is *Myir IMX8MM V2*                                                                                                                                    
+**Note**: Autosar version 4.3.1                                                                                                                                    
