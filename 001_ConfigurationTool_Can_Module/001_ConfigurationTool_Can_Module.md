@@ -13,13 +13,13 @@ Nội dung của bài viết gồm có những phần sau nhé 📢📢📢:
     - [1. Introduction](#1️⃣-introduction)
     - [2. Summary](#2️⃣-summary)
 - [II. Contents](#👉-contents)
-    - [1. Hướng dẫn sử dụng MCAL Configurator](#1️⃣-Hướng-dẫn-sử-dụng-MCAL-Configurator)
+    - [1. MCAL Configurator](#1️⃣-MCAL-Configurator)
     - [2. Can Module](#2️⃣-Can-Module)
 - [III. Reference](#📌-reference)
 
 ## 👉 Contents
 
-### 1️⃣ Hướng dẫn sử dụng MCAL Configurator
+### 1️⃣ MCAL Configurator
 ***MCAL sử dụng Elektrobit Tresos để cấu hình các mô-đun MCAL.***
 + Định nghĩa tham số ECU của mô-đun MCAL được ghi lại ở định dạng Elektrobit xdm.
 + Các mô-đun MCAL được cung cấp dưới dạng plugin EBtresos.
