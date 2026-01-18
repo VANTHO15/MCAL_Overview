@@ -97,7 +97,105 @@ Nội dung của bài viết gồm có những phần sau nhé 📢📢📢:
 + LEVEL 2, Enhanced (Synchronous/Asynchronous) SPI Handler/Driver: the communication is based on asynchronous behavior or synchronous handling, using either interrupts or polling mechanism selectable during execution time and with a Priority policy to handle multiple accesses. Buffer usage is configurable as for other levels
 
 ### Priority Handling and Job Queuing Operations
-Priority mechanism is implemented using a pure software function as hardware priority mechanism is not supported by the SPI module. Priority is supported at job level in a sequence. As per the AUTOSAR SPI HandlerDriver SWS jobs are scheduled in order of priority. The priority of jobs determines their scheduling even across sequences as long as a sequence is marked as interruptible.The internal implementation of job priority based scheduling is based on priority queue implemented as a doubly linked list. All jobs are queued into a work queue per hardware unit. The hardware services the next job in the work queue by de-queuing from this work queue. The work queue implementation ensures the highest priority job is de-queued always.
++ Priority mechanism is implemented using a pure software function as hardware priority mechanism is not supported by the SPI module. Priority is supported at job level in a sequence. As per the AUTOSAR SPI HandlerDriver SWS jobs are scheduled in order of priority. The priority of jobs determines their scheduling even across sequences as long as a sequence is marked as interruptible.The internal implementation of job priority based scheduling is based on priority queue implemented as a doubly linked list. All jobs are queued into a work queue per hardware unit. The hardware services the next job in the work queue by de-queuing from this work queue. The work queue implementation ensures the highest priority job is de-queued always.
+
+### Interrupt Service Routines
++ For each of the configured hardware units (MCSPI), one interrupt service routine has to be mapped. The Integrator has to map the interrupt service routines to the interrupt sources of the respective HW unit interrupt. The supported ISRs are part of the Spi_Irq.h file. Spi_Irq.h contains ISR for each of MCSPI hardware units. These should be used for the registration.
++ Handling MCSPI FIFO Interrupt: MCSPI Hardware Behavior: The hardware doesn't generate TX empty interrupt for the last chunk of data write when the write is not equal to the FIFO depth. This means that the EOW (End of Word) interrupt cannot be used for data transfer (TX) completion.
++ To handle scenario when the actual transfer size is not a multiple of FIFO size the following steps shall be performed.
+  - The transfer request needs to be split into two
+    + one with multiple of FIFO trigger level
+    + another with just with the reminder words
+  - For the last chunk transfer, the FIFO level is reconfigured to be equal to the chunk size in the ISR context. This will generate the EOW interrupt
++ From timing point of view, the only change with this two stage transfer is that, there will be a slightly different delay in between these two transfers compared to the full un-interrupted transfer. This is due to the ISR time and also we are waiting for the first transfer to fully complete (FIFO is fully drained). This delay is similar to the delay between channels in a job. So there is no real impact on performance.
+
+​<p align="center">
+  <img src="Images/image3.png" alt="hello" style="width:600px; height:auto;"/>   
+</p>
+
+### Dynamic Behavior
++ The SPI driver at any time will be in one of the following states. The state transition will depend on the APIs invoked by the application
+  - SPI_UNINIT: The SPI Handler/Driver is not initialized or not usable. This is the state before starting driver initialization or after the driver is de-initialized.
+  - SPI_IDLE: The SPI Handler/Driver is not currently transmitting any Job. This is the state before the transmission is started or after the transmission is completed.
+  - SPI_BUSY: This is the state after a transmission has started i.e. transmission for the sequence is ongoing.
+
+### Directory Structure
+- The below diagram shows the overall files structure for the SPI driver. . The Spi.c and Spi.h are the 2 files that contain the SPI driver’s APIs.
+
+​<p align="center">
+  <img src="Images/image4.png" alt="hello" style="width:600px; height:auto;"/>   
+</p>
+
+### The design's specific configurable parameters are as follows:
+
+​<p align="center">
+  <img src="Images/image5.png" alt="hello" style="width:1000px; height:auto;"/>   
+</p>
+
+### Variant Support
++ The driver shall support both VARIANT-LINK-TIME , VARIANT-PRE-COMPILE & VARIANT-POST-BUILD.
+
+### Development Error Reporting
++ By default, development errors are reported to the DET using the service Det_ReportError(), if development error detection and reporting are enabled (i.e. checkboxes Development Mode and Development Error Reporting are checked). The reported module SPI ID is 83. The reported service IDs identify the services which are described earlier. The following table presents the service IDs and the related services:
+
+​<p align="center">
+  <img src="Images/image6.png" alt="hello" style="width:600px; height:auto;"/>   
+</p>
+
+### Parameter Checking
++ AUTOSAR requires that API functions check the validity of their parameters. The checks in table are internal parameter checks of the API functions. These checks are for development error reporting and can be enabled or disabled. ECUC parameters error checks are handled as per ECUC Parameter checking in configurator . The deviations should be documented in user guide.
+
+​<p align="center">
+  <img src="Images/image7.png" alt="hello" style="width:600px; height:auto;"/>   
+</p>
+
+### Error Handling : Receive FIFO/Buffer overflow
++ The MCSPI module supports Rx overflow interrupt generation. SPI driver uses this feature for reporting RX FIFO overflow error. This is detected when it is enabled in hardware and receiver register or FIFO becomes filled.
++ MCSPI module support uses of FIFO for receive and transmit operations. The FIFO is shared between Rx and TX. If FIFO is enabled receive overrun interrupt indicates FIFO full for receive. SPI driver reports this to application and stops processing any further transfers.
+
+### MACROS, Data Types & Structures
++ The sections below lists some of key data structures that shall be implemented and used in driver implementation
+
+​<p align="center">
+  <img src="Images/image8.png" alt="hello" style="width:600px; height:auto;"/>   
+</p>
+
++ Spi_StatusType: This type defines a range of specific status for SPI Handler/Driver
++ Spi_JobResultType: Enumeration This type defines a range of specific Jobs status for SPI Handler/Driver
++ Spi_SeqResultType: Enumeration This type defines a range of specific Sequences status for SPI Handler/Driver
++ Spi_DataBufferType: Used to specify the type of application data buffer elements
++ Spi_NumberOfDataType: Used to specify Type for defining the number of data elements of the type Spi_DataBufferType to send and / or receive by Channel
++ Spi_ChannelType: Used to specify the identification (ID) for a Channel.
++ Spi_JobType: Used to specify the identification (ID) for a Job
++ Spi_SequenceType: Used to specify the identification (ID) for a sequence of jobs
++ Spi_HWUnitType: Used to specify the identification (ID) for a SPI Hardware microcontroller peripheral (unit)
++ Spi_AsyncModeType: Used to specify the asynchronous mechanism mode for SPI busses handled asynchronously in LEVEL 2
+
+### Global Variables
++ This design expects that implementation will require to use following global variables.
+
+​<p align="center">
+  <img src="Images/image9.png" alt="hello" style="width:600px; height:auto;"/>   
+</p>
+
+### Test Criteria
++ The sections below identify some of the aspects of design that would require emphasis during testing of this design implementation
+  - Validating ECUC Parameter: Configuration for each test case shall be generated by EB Tresos command line.
++ Performance Testing
+  - While measuring time taken to send data, care should be taken to use a timer (and not rely on CPU ticks & conversion). Time shall be measured between invoke of transmit API and return of this function call for both Asynctransmit and Synctransmit cases.
++ Loopback Test
+  - The loopback transmit test for all SPI instances
++ Transmit Test with different configurations
+  - Multichannel transmit test with different channel parameter configurations
+  - Multijob transmit test with different job parameter configurations
+  - Multisequence transmit test with Non interruptible sequence configuration
+  - Multisequence transmit test with Interruptible sequence configuration
+  - Transmit test with different device configurations like modes, polarity and phase.
+  - Asynchronous and Synchronous mode of transmission test
+  - Asynchronous transmission test with interrupt and polling mode
+  - Transmit test with IB/EB channel buffering modes
++ Transmit test with different baud rates
+  - Transmit test with different clock bit rates obtained for data transfer by programming the clock divider
 
 ## 📌 Reference
 
