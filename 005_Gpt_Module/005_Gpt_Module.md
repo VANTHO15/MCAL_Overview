@@ -18,7 +18,7 @@ Nội dung của bài viết gồm có những phần sau nhé 📢📢📢:
 ## 👉 Contents
 
 ### Introduction
-+ This document details AUTOSAR BSW Eth module implementation
++ This document details AUTOSAR BSW Gpt module implementation
   - Supported AUTOSAR Release : 4.3.1
   - Supported Configuration Variants : Pre-Compile & Post Build
 
